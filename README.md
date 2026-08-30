@@ -68,3 +68,4 @@ Admin panelga kirish uchun botga `/admin` buyrug'ini yuboring.
 6. Miqdor tanlang
 7. Telefon raqamingizni yuboring
 8. ✅ Buyurtma qabul qilindi!
+# sardor20
