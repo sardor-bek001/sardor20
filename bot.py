@@ -1,6 +1,6 @@
 # ==========================================
-# Tech Store UZ Bot - Kengaytirilgan Versiya
-# 10 ta yangi funksiya bilan
+# Tech Store UZ Bot - @Tech_Store_uz_bot
+# pyTelegramBotAPI (telebot) asosida
 # ==========================================
 
 import telebot
@@ -17,820 +17,728 @@ ADMIN_ID = 466638794
 BOT_NAME = "Tech Store UZ"
 CURRENCY = "so'm"
 
+# Logging
 logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 logger = logging.getLogger(__name__)
 
+# Bot yaratish
 bot = telebot.TeleBot(BOT_TOKEN, parse_mode="HTML")
-
-# ============ LUG'AT (TRANSLATIONS) ============
-
-TEXTS = {
-    "uz": {
-        "welcome": "🏪 <b>{}</b> ga xush kelibsiz!\n\nIltimos, tilni tanlang / Пожалуйста, выберите язык:",
-        "main_menu": "🏠 Asosiy menyu",
-        "btn_catalog": "🛍 Katalog",
-        "btn_cart": "🛒 Savatcha",
-        "btn_wishlist": "⭐ Sevimlilar",
-        "btn_sales": "🏷 Aksiyalar",
-        "btn_search": "🔍 Qidiruv",
-        "btn_referral": "👥 Do'stlarni taklif qilish",
-        "btn_settings": "⚙️ Tilni o'zgartirish",
-        "btn_orders": "📦 Buyurtmalarim",
-        "search_prompt": "🔍 Qidirmoqchi bo'lgan mahsulot nomini yozing:",
-        "search_not_found": "😔 Hech narsa topilmadi.",
-        "search_results": "🔍 Qidiruv natijalari:",
-        "cart_empty": "🛒 Savatchangiz bo'sh.",
-        "cart_content": "🛒 <b>Savatchangizda:</b>\n\n",
-        "cart_total": "\n💰 <b>Jami:</b> {} {}",
-        "btn_checkout": "🛍 Buyurtma berish",
-        "btn_clear_cart": "🗑 Savatchani tozalash",
-        "checkout_phone": "📱 Telefon raqamingizni yuboring (Masalan: +998901234567) yoxud tugmani bosing:",
-        "checkout_payment": "💳 To'lov usulini tanlang:",
-        "payment_cash": "💵 Naqd pul",
-        "payment_click": "🔵 Click",
-        "payment_payme": "🟢 Payme",
-        "payment_uzum": "🟣 Uzum",
-        "order_success": "✅ <b>Buyurtmangiz qabul qilindi!</b>\nBuyurtma raqami: #{}\nTo'lov usuli: <b>{}</b>\n\nOperatorlarimiz tez orada bog'lanadi.",
-        "wishlist_empty": "⭐ Sevimlilar ro'yxati bo'sh.",
-        "added_to_cart": "✅ Savatchaga qo'shildi!",
-        "added_to_wishlist": "❤️ Sevimlilarga qo'shildi!",
-        "removed_from_wishlist": "💔 Sevimlilardan o'chirildi!",
-        "referral_text": "👥 <b>Do'stlarni taklif qilish</b>\n\nSizning taklif havolangiz:\n<code>{}</code>\n\nSizning balansingiz: <b>{} {}</b>\n\n<i>Har bir do'stingiz uchun 5000 so'm bonus beriladi!</i>",
-        "rate_product": "⭐ Baholash:",
-        "thank_you_rating": "✅ Bahoingiz uchun rahmat!",
-        "admin_menu": "🔐 Admin panel",
-        "btn_broadcast": "📢 Xabar yuborish (Broadcast)",
-        "broadcast_prompt": "📢 Barcha foydalanuvchilarga yuboriladigan xabarni yozing yoki rasm yuboring. Bekor qilish uchun /cancel.",
-        "broadcast_done": "✅ Xabar yuborildi!",
-        "choose_category": "📂 Kategoriyani tanlang:",
-        "choose_product": "🔽 Mahsulotni tanlang:",
-        "product_info": "📦 <b>{}</b>\n\n📝 {}\n\n💰 Narxi: {} {}\n⭐ Reyting: {} ({} ta baho)",
-        "product_sale": "🏷 <b>Chegirma!</b>\nEski narx: <s>{} {}</s>\nYangi narx: {} {}",
-        "btn_back": "⬅️ Orqaga",
-        "btn_add_cart": "🛒 Savatchaga qo'shish",
-        "btn_add_wishlist": "❤️ Sevimlilarga",
-        "btn_remove_wishlist": "💔 Sevimlilardan olish",
-        "btn_cancel": "❌ Bekor qilish",
-        "btn_send_phone": "📱 Telefon raqam yuborish",
-        "lang_changed": "✅ Til o'zgartirildi!",
-        "sales_title": "🏷 <b>Hozirgi Aksiyalar:</b>\n"
-    },
-    "ru": {
-        "welcome": "🏪 Добро пожаловать в <b>{}</b>!\n\nIltimos, tilni tanlang / Пожалуйста, выберите язык:",
-        "main_menu": "🏠 Главное меню",
-        "btn_catalog": "🛍 Каталог",
-        "btn_cart": "🛒 Корзина",
-        "btn_wishlist": "⭐ Избранное",
-        "btn_sales": "🏷 Акции",
-        "btn_search": "🔍 Поиск",
-        "btn_referral": "👥 Пригласить друзей",
-        "btn_settings": "⚙️ Изменить язык",
-        "btn_orders": "📦 Мои заказы",
-        "search_prompt": "🔍 Напишите название товара для поиска:",
-        "search_not_found": "😔 Ничего не найдено.",
-        "search_results": "🔍 Результаты поиска:",
-        "cart_empty": "🛒 Ваша корзина пуста.",
-        "cart_content": "🛒 <b>В корзине:</b>\n\n",
-        "cart_total": "\n💰 <b>Итого:</b> {} {}",
-        "btn_checkout": "🛍 Оформить заказ",
-        "btn_clear_cart": "🗑 Очистить корзину",
-        "checkout_phone": "📱 Отправьте ваш номер телефона (Например: +998901234567) или нажмите кнопку:",
-        "checkout_payment": "💳 Выберите способ оплаты:",
-        "payment_cash": "💵 Наличные",
-        "payment_click": "🔵 Click",
-        "payment_payme": "🟢 Payme",
-        "payment_uzum": "🟣 Uzum",
-        "order_success": "✅ <b>Ваш заказ принят!</b>\nНомер заказа: #{}\nСпособ оплаты: <b>{}</b>\n\nНаши операторы свяжутся с вами в ближайшее время.",
-        "wishlist_empty": "⭐ Список избранного пуст.",
-        "added_to_cart": "✅ Добавлено в корзину!",
-        "added_to_wishlist": "❤️ Добавлено в избранное!",
-        "removed_from_wishlist": "💔 Удалено из избранного!",
-        "referral_text": "👥 <b>Пригласить друзей</b>\n\nВаша ссылка:\n<code>{}</code>\n\nВаш баланс: <b>{} {}</b>\n\n<i>За каждого друга вы получаете бонус 5000 сум!</i>",
-        "rate_product": "⭐ Оценить:",
-        "thank_you_rating": "✅ Спасибо за оценку!",
-        "admin_menu": "🔐 Админ панель",
-        "btn_broadcast": "📢 Рассылка (Broadcast)",
-        "broadcast_prompt": "📢 Напишите сообщение для рассылки всем пользователям или отправьте фото. Для отмены введите /cancel.",
-        "broadcast_done": "✅ Рассылка завершена!",
-        "choose_category": "📂 Выберите категорию:",
-        "choose_product": "🔽 Выберите товар:",
-        "product_info": "📦 <b>{}</b>\n\n📝 {}\n\n💰 Цена: {} {}\n⭐ Рейтинг: {} ({} оценок)",
-        "product_sale": "🏷 <b>Скидка!</b>\nСтарая цена: <s>{} {}</s>\nНовая цена: {} {}",
-        "btn_back": "⬅️ Назад",
-        "btn_add_cart": "🛒 В корзину",
-        "btn_add_wishlist": "❤️ В избранное",
-        "btn_remove_wishlist": "💔 Из избранного",
-        "btn_cancel": "❌ Отмена",
-        "btn_send_phone": "📱 Отправить контакт",
-        "lang_changed": "✅ Язык изменен!",
-        "sales_title": "🏷 <b>Текущие акции:</b>\n"
-    }
-}
-
-user_states = {}  # {user_id: {"state": "...", "data": {}}}
 
 # ============ MA'LUMOTLAR BAZASI ============
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tech_store.db")
+
+# Foydalanuvchi holatlari (FSM o'rniga)
+user_states = {}  # {user_id: {"state": "...", "data": {...}}}
+
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
+
 def init_db():
     conn = get_db()
     c = conn.cursor()
 
-    c.execute("""CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY,
-        fullname TEXT,
-        username TEXT,
-        phone TEXT,
-        language TEXT DEFAULT 'uz',
-        referrer_id INTEGER,
-        balance INTEGER DEFAULT 0,
-        registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )""")
-
     c.execute("""CREATE TABLE IF NOT EXISTS categories (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name_uz TEXT NOT NULL,
-        name_ru TEXT NOT NULL,
+        name TEXT NOT NULL,
         emoji TEXT DEFAULT '📦'
     )""")
 
     c.execute("""CREATE TABLE IF NOT EXISTS products (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         category_id INTEGER NOT NULL,
-        name_uz TEXT NOT NULL,
-        name_ru TEXT NOT NULL,
-        desc_uz TEXT,
-        desc_ru TEXT,
+        name TEXT NOT NULL,
+        description TEXT,
         price INTEGER NOT NULL,
-        old_price INTEGER,
-        photo_url TEXT,
-        rating_sum INTEGER DEFAULT 0,
-        rating_count INTEGER DEFAULT 0,
         in_stock INTEGER DEFAULT 1,
         FOREIGN KEY (category_id) REFERENCES categories(id)
-    )""")
-
-    c.execute("""CREATE TABLE IF NOT EXISTS cart (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        product_id INTEGER NOT NULL,
-        quantity INTEGER DEFAULT 1,
-        FOREIGN KEY (user_id) REFERENCES users(id),
-        FOREIGN KEY (product_id) REFERENCES products(id)
-    )""")
-
-    c.execute("""CREATE TABLE IF NOT EXISTS wishlist (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        product_id INTEGER NOT NULL,
-        UNIQUE(user_id, product_id)
-    )""")
-
-    c.execute("""CREATE TABLE IF NOT EXISTS ratings (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        product_id INTEGER NOT NULL,
-        score INTEGER NOT NULL,
-        UNIQUE(user_id, product_id)
     )""")
 
     c.execute("""CREATE TABLE IF NOT EXISTS orders (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
+        user_fullname TEXT,
+        username TEXT,
         phone TEXT,
-        payment_method TEXT,
-        total_price INTEGER NOT NULL,
+        product_id INTEGER NOT NULL,
+        product_name TEXT NOT NULL,
+        product_price INTEGER NOT NULL,
+        quantity INTEGER DEFAULT 1,
         status TEXT DEFAULT 'yangi',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )""")
 
-    c.execute("""CREATE TABLE IF NOT EXISTS order_items (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        order_id INTEGER NOT NULL,
-        product_id INTEGER NOT NULL,
-        quantity INTEGER NOT NULL,
-        price INTEGER NOT NULL,
-        FOREIGN KEY (order_id) REFERENCES orders(id)
+    c.execute("""CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY,
+        fullname TEXT,
+        username TEXT,
+        phone TEXT,
+        registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )""")
 
     conn.commit()
     conn.close()
 
+
 def add_sample_data():
     conn = get_db()
     c = conn.cursor()
-    if c.execute("SELECT COUNT(*) FROM categories").fetchone()[0] > 0:
+    c.execute("SELECT COUNT(*) FROM categories")
+    if c.fetchone()[0] > 0:
         conn.close()
         return
 
     categories = [
-        ("📱 Smartfonlar", "📱 Смартфоны", "📱"),
-        ("💻 Noutbuklar", "💻 Ноутбуки", "💻"),
-        ("🎧 Aksessuarlar", "🎧 Аксессуары", "🎧"),
+        ("📱 Smartfonlar", "📱"),
+        ("💻 Noutbuklar", "💻"),
+        ("🎧 Aksessuarlar", "🎧"),
+        ("⌚ Smart soatlar", "⌚"),
+        ("📟 Planshetlar", "📟"),
     ]
-    c.executemany("INSERT INTO categories (name_uz, name_ru, emoji) VALUES (?, ?, ?)", categories)
+    c.executemany("INSERT INTO categories (name, emoji) VALUES (?, ?)", categories)
 
     products = [
-        (1, "iPhone 15 Pro Max", "iPhone 15 Pro Max (RU)", "256GB xotira, 48MP kamera", "256ГБ память, 48МП камера", 14500000, 15000000, "https://images.uzum.uz/cl4d4il6sfhvcppsflfg/original.jpg"),
-        (1, "Samsung Galaxy S24 Ultra", "Samsung Galaxy S24 Ultra (RU)", "Snapdragon 8 Gen 3, 200MP", "Snapdragon 8 Gen 3, 200МП", 13800000, None, "https://images.uzum.uz/cnqbsm7i3rtms91fclvg/original.jpg"),
-        (2, "MacBook Air M3", "MacBook Air M3 (RU)", "Apple M3 chip, 13.6 dyuym", "Чип Apple M3, 13.6 дюйм", 15500000, 16000000, "https://images.uzum.uz/cos5363i3rtteup85t80/original.jpg"),
-        (3, "AirPods Pro 2", "AirPods Pro 2 (RU)", "Aktiv shovqin bekor qilish", "Активное шумоподавление", 2800000, None, "https://images.uzum.uz/cm399t3i3rtms90ss2t0/original.jpg")
+        (1, "iPhone 15 Pro Max", "🔥 A17 Pro chip\n📸 48MP kamera\n🔋 4422 mAh batareya\n💾 256GB xotira", 14500000, 1),
+        (1, "Samsung Galaxy S24 Ultra", "🔥 Snapdragon 8 Gen 3\n📸 200MP kamera\n🔋 5000 mAh\n💾 256GB xotira", 13800000, 1),
+        (1, "Xiaomi 14 Pro", "🔥 Snapdragon 8 Gen 3\n📸 50MP Leica kamera\n🔋 4880 mAh\n💾 256GB", 7500000, 1),
+        (1, "iPhone 15", "🔥 A16 Bionic chip\n📸 48MP kamera\n🔋 3877 mAh\n💾 128GB xotira", 10200000, 1),
+        (1, "Samsung Galaxy A55", "🔥 Exynos 1480\n📸 50MP kamera\n🔋 5000 mAh\n💾 128GB", 3800000, 1),
+
+        (2, "MacBook Air M3", "🔥 Apple M3 chip\n🖥 13.6\" Liquid Retina\n💾 8GB/256GB\n🔋 18 soat batareya", 15500000, 1),
+        (2, "Lenovo IdeaPad 3", "🔥 Intel i5-12450H\n🖥 15.6\" FHD\n💾 8GB/512GB SSD\n🎮 Integ. GPU", 5200000, 1),
+        (2, "HP Pavilion 15", "🔥 AMD Ryzen 5 7530U\n🖥 15.6\" FHD IPS\n💾 8GB/512GB SSD", 5800000, 1),
+        (2, "ASUS VivoBook 15", "🔥 Intel i3-1215U\n🖥 15.6\" FHD\n💾 8GB/256GB SSD", 3900000, 1),
+
+        (3, "AirPods Pro 2", "🎵 Aktiv shovqin bekor qilish\n🔋 6 soat ishlash\n💧 IPX4 suv o'tkazmaydi", 2800000, 1),
+        (3, "Samsung Galaxy Buds2 Pro", "🎵 ANC\n🔋 5 soat\n💧 IPX7", 1500000, 1),
+        (3, "Baseus 65W zaryadka", "⚡ 65W tez zaryadlash\n🔌 USB-C + USB-A\n📱 Barcha qurilmalarga mos", 250000, 1),
+        (3, "Anker PowerBank 20000mAh", "🔋 20000 mAh\n⚡ 22.5W tez zaryadlash\n📱 2 ta qurilmani zaryadlaydi", 350000, 1),
+        (3, "iPhone 15 Pro chexol (MagSafe)", "🛡 Himoya chexol\n🧲 MagSafe\n🎨 6 xil rang", 150000, 1),
+
+        (4, "Apple Watch Series 9", "🖥 Always-On Retina\n❤️ Sog'liq sensori\n💧 50m suv o'tkazmaydi\n🔋 18 soat", 5500000, 1),
+        (4, "Samsung Galaxy Watch 6", "🖥 Super AMOLED\n❤️ BioActive sensor\n💧 5ATM+IP68\n🔋 40 soat", 3200000, 1),
+        (4, "Xiaomi Watch S3", "🖥 1.43\" AMOLED\n❤️ SpO2, yurak urishi\n💧 5ATM\n🔋 15 kun", 1200000, 1),
+
+        (5, "iPad Air M2", "🔥 Apple M2 chip\n🖥 11\" Liquid Retina\n💾 128GB\n✏️ Apple Pencil Pro", 8500000, 1),
+        (5, "Samsung Galaxy Tab S9", "🔥 Snapdragon 8 Gen 2\n🖥 11\" AMOLED 120Hz\n💾 128GB\n✏️ S Pen", 7200000, 1),
+        (5, "Xiaomi Pad 6", "🔥 Snapdragon 870\n🖥 11\" 2.8K 144Hz\n💾 128GB\n🔋 8840 mAh", 3500000, 1),
     ]
-    c.executemany("INSERT INTO products (category_id, name_uz, name_ru, desc_uz, desc_ru, price, old_price, photo_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", products)
+    c.executemany("INSERT INTO products (category_id, name, description, price, in_stock) VALUES (?, ?, ?, ?, ?)", products)
 
     conn.commit()
     conn.close()
-    logger.info("Namuna ma'lumotlar qo'shildi!")
+    logger.info("✅ Namuna ma'lumotlar qo'shildi!")
+
 
 def format_price(price):
     return f"{price:,}".replace(",", " ")
 
-def get_lang(user_id):
-    conn = get_db()
-    row = conn.execute("SELECT language FROM users WHERE id = ?", (user_id,)).fetchone()
-    conn.close()
-    return row["language"] if row else "uz"
 
-def t(user_id, key, *args):
-    lang = get_lang(user_id)
-    text = TEXTS.get(lang, TEXTS["uz"]).get(key, key)
-    if args:
-        return text.format(*args)
-    return text
+# ============ KLAVIATURALAR ============
 
-# ============ KEYBOARDS ============
-
-def lang_kb():
-    kb = types.InlineKeyboardMarkup()
-    kb.add(
-        types.InlineKeyboardButton(text="🇺🇿 O'zbekcha", callback_data="lang_uz"),
-        types.InlineKeyboardButton(text="🇷🇺 Русский", callback_data="lang_ru")
-    )
-    return kb
-
-def main_menu_kb(user_id):
-    lang = get_lang(user_id)
-    texts = TEXTS[lang]
-    kb = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    kb.add(
-        types.KeyboardButton(texts["btn_catalog"]),
-        types.KeyboardButton(texts["btn_cart"]),
-        types.KeyboardButton(texts["btn_sales"]),
-        types.KeyboardButton(texts["btn_search"]),
-        types.KeyboardButton(texts["btn_wishlist"]),
-        types.KeyboardButton(texts["btn_orders"]),
-        types.KeyboardButton(texts["btn_referral"]),
-        types.KeyboardButton(texts["btn_settings"])
-    )
-    return kb
-
-def cancel_kb(user_id):
+def main_menu_kb():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    kb.add(types.KeyboardButton(t(user_id, "btn_cancel")))
+    kb.row(types.KeyboardButton("🛍 Katalog"), types.KeyboardButton("🛒 Buyurtmalarim"))
+    kb.row(types.KeyboardButton("📞 Biz bilan bog'lanish"), types.KeyboardButton("ℹ️ Bot haqida"))
     return kb
 
-def phone_kb(user_id):
+
+def phone_kb():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    kb.add(types.KeyboardButton(t(user_id, "btn_send_phone"), request_contact=True))
-    kb.add(types.KeyboardButton(t(user_id, "btn_cancel")))
+    kb.row(types.KeyboardButton("📱 Telefon raqamni yuborish", request_contact=True))
+    kb.row(types.KeyboardButton("❌ Bekor qilish"))
     return kb
 
-def payment_kb(user_id):
-    kb = types.InlineKeyboardMarkup(row_width=2)
-    kb.add(
-        types.InlineKeyboardButton(t(user_id, "payment_cash"), callback_data="pay_cash"),
-        types.InlineKeyboardButton(t(user_id, "payment_click"), callback_data="pay_click"),
-        types.InlineKeyboardButton(t(user_id, "payment_payme"), callback_data="pay_payme"),
-        types.InlineKeyboardButton(t(user_id, "payment_uzum"), callback_data="pay_uzum")
-    )
+
+def cancel_kb():
+    kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    kb.row(types.KeyboardButton("❌ Bekor qilish"))
     return kb
 
-def categories_inline_kb(user_id):
-    kb = types.InlineKeyboardMarkup(row_width=1)
-    conn = get_db()
-    cats = conn.execute("SELECT * FROM categories").fetchall()
-    conn.close()
-    lang = get_lang(user_id)
-    name_col = f"name_{lang}"
-    for cat in cats:
-        kb.add(types.InlineKeyboardButton(text=f"{cat['emoji']} {cat[name_col]}", callback_data=f"cat_{cat['id']}"))
-    return kb
-
-def products_inline_kb(user_id, category_id=None, is_sale=False, search_query=None):
-    kb = types.InlineKeyboardMarkup(row_width=1)
-    conn = get_db()
-    lang = get_lang(user_id)
-    name_col = f"name_{lang}"
-    
-    if category_id:
-        prods = conn.execute(f"SELECT * FROM products WHERE category_id = ? AND in_stock = 1", (category_id,)).fetchall()
-    elif is_sale:
-        prods = conn.execute(f"SELECT * FROM products WHERE old_price IS NOT NULL AND in_stock = 1").fetchall()
-    elif search_query:
-        query = f"%{search_query}%"
-        prods = conn.execute(f"SELECT * FROM products WHERE (name_uz LIKE ? OR name_ru LIKE ?) AND in_stock = 1", (query, query)).fetchall()
-    else:
-        prods = []
-    
-    conn.close()
-    
-    for p in prods:
-        price_text = format_price(p['price'])
-        kb.add(types.InlineKeyboardButton(text=f"{p[name_col]} — {price_text} {CURRENCY}", callback_data=f"prod_{p['id']}"))
-    
-    if category_id or is_sale:
-        kb.add(types.InlineKeyboardButton(text=t(user_id, "btn_back"), callback_data="back_cats"))
-    return kb, len(prods)
-
-def product_detail_kb(user_id, product_id, category_id):
-    kb = types.InlineKeyboardMarkup(row_width=2)
-    
-    conn = get_db()
-    in_wishlist = conn.execute("SELECT 1 FROM wishlist WHERE user_id = ? AND product_id = ?", (user_id, product_id)).fetchone()
-    conn.close()
-    
-    wish_text = t(user_id, "btn_remove_wishlist") if in_wishlist else t(user_id, "btn_add_wishlist")
-    
-    kb.add(types.InlineKeyboardButton(text=t(user_id, "btn_add_cart"), callback_data=f"addcart_{product_id}"))
-    kb.add(types.InlineKeyboardButton(text=wish_text, callback_data=f"wish_{product_id}"))
-    
-    kb.add(
-        types.InlineKeyboardButton("⭐ 1", callback_data=f"rate_{product_id}_1"),
-        types.InlineKeyboardButton("⭐ 2", callback_data=f"rate_{product_id}_2"),
-        types.InlineKeyboardButton("⭐ 3", callback_data=f"rate_{product_id}_3"),
-        types.InlineKeyboardButton("⭐ 4", callback_data=f"rate_{product_id}_4"),
-        types.InlineKeyboardButton("⭐ 5", callback_data=f"rate_{product_id}_5")
-    )
-    
-    kb.add(types.InlineKeyboardButton(text=t(user_id, "btn_back"), callback_data=f"cat_{category_id}"))
-    return kb
-
-def cart_kb(user_id):
-    kb = types.InlineKeyboardMarkup(row_width=3)
-    conn = get_db()
-    items = conn.execute("SELECT c.id, p.name_uz, p.name_ru, c.quantity, c.product_id FROM cart c JOIN products p ON c.product_id = p.id WHERE c.user_id = ?", (user_id,)).fetchall()
-    conn.close()
-    
-    lang = get_lang(user_id)
-    name_col = f"name_{lang}"
-    
-    for item in items:
-        kb.add(
-            types.InlineKeyboardButton("➖", callback_data=f"cartminus_{item['product_id']}"),
-            types.InlineKeyboardButton(f"{item[name_col]} ({item['quantity']}x)", callback_data="none"),
-            types.InlineKeyboardButton("➕", callback_data=f"cartplus_{item['product_id']}")
-        )
-    
-    if items:
-        kb.row(
-            types.InlineKeyboardButton(t(user_id, "btn_clear_cart"), callback_data="cart_clear"),
-            types.InlineKeyboardButton(t(user_id, "btn_checkout"), callback_data="cart_checkout")
-        )
-    return kb
 
 def admin_menu_kb():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
     kb.row(types.KeyboardButton("📊 Statistika"), types.KeyboardButton("📋 Buyurtmalar"))
-    kb.row(types.KeyboardButton("📢 Xabar yuborish"), types.KeyboardButton("🏠 Asosiy menyu"))
+    kb.row(types.KeyboardButton("➕ Mahsulot qo'shish"), types.KeyboardButton("🗑 Mahsulot o'chirish"))
+    kb.row(types.KeyboardButton("🏠 Asosiy menyu"))
     return kb
 
 
-# ============ COMMANDS ============
+def categories_inline_kb():
+    kb = types.InlineKeyboardMarkup()
+    conn = get_db()
+    cats = conn.execute("SELECT * FROM categories").fetchall()
+    conn.close()
+    for cat in cats:
+        kb.add(types.InlineKeyboardButton(text=cat["name"], callback_data=f"cat_{cat['id']}"))
+    return kb
+
+
+def products_inline_kb(category_id):
+    kb = types.InlineKeyboardMarkup()
+    conn = get_db()
+    prods = conn.execute("SELECT * FROM products WHERE category_id = ? AND in_stock = 1", (category_id,)).fetchall()
+    conn.close()
+    for p in prods:
+        kb.add(types.InlineKeyboardButton(
+            text=f"{p['name']} — {format_price(p['price'])} {CURRENCY}",
+            callback_data=f"prod_{p['id']}"
+        ))
+    kb.add(types.InlineKeyboardButton(text="⬅️ Orqaga", callback_data="back_cats"))
+    return kb
+
+
+def product_detail_kb(product_id, category_id):
+    kb = types.InlineKeyboardMarkup()
+    kb.add(types.InlineKeyboardButton(text="🛒 Buyurtma berish", callback_data=f"order_{product_id}"))
+    kb.add(types.InlineKeyboardButton(text="⬅️ Orqaga", callback_data=f"cat_{category_id}"))
+    return kb
+
+
+def quantity_kb(product_id):
+    kb = types.InlineKeyboardMarkup(row_width=3)
+    kb.add(
+        types.InlineKeyboardButton(text="1 dona", callback_data=f"qty_{product_id}_1"),
+        types.InlineKeyboardButton(text="2 dona", callback_data=f"qty_{product_id}_2"),
+        types.InlineKeyboardButton(text="3 dona", callback_data=f"qty_{product_id}_3"),
+    )
+    kb.add(types.InlineKeyboardButton(text="⬅️ Orqaga", callback_data=f"prod_{product_id}"))
+    return kb
+
+
+def order_status_kb(order_id):
+    kb = types.InlineKeyboardMarkup(row_width=2)
+    kb.add(
+        types.InlineKeyboardButton(text="✅ Qabul qilindi", callback_data=f"st_{order_id}_qabul"),
+        types.InlineKeyboardButton(text="🚚 Yetkazilmoqda", callback_data=f"st_{order_id}_yetkazish"),
+    )
+    kb.add(
+        types.InlineKeyboardButton(text="📦 Topshirildi", callback_data=f"st_{order_id}_topshirildi"),
+        types.InlineKeyboardButton(text="❌ Bekor qilindi", callback_data=f"st_{order_id}_bekor"),
+    )
+    return kb
+
+
+# ============ /start KOMANDASI ============
 
 @bot.message_handler(commands=["start"])
 def cmd_start(message):
-    referrer_id = None
-    args = message.text.split()
-    if len(args) > 1 and args[1].startswith("ref_"):
-        try:
-            referrer_id = int(args[1].split("_")[1])
-            if referrer_id == message.from_user.id:
-                referrer_id = None
-        except:
-            pass
-
+    # Foydalanuvchini saqlash
     conn = get_db()
-    user = conn.execute("SELECT id FROM users WHERE id = ?", (message.from_user.id,)).fetchone()
-    if not user:
-        conn.execute("INSERT INTO users (id, fullname, username, referrer_id) VALUES (?, ?, ?, ?)",
-                     (message.from_user.id, message.from_user.full_name, message.from_user.username, referrer_id))
-        if referrer_id:
-            conn.execute("UPDATE users SET balance = balance + 5000 WHERE id = ?", (referrer_id,))
-            try:
-                bot.send_message(referrer_id, f"🎉 Yangi do'stingiz botga qo'shildi! Balansingizga 5000 so'm qo'shildi.")
-            except: pass
+    conn.execute("INSERT OR REPLACE INTO users (id, fullname, username) VALUES (?, ?, ?)",
+                 (message.from_user.id, message.from_user.full_name, message.from_user.username))
     conn.commit()
     conn.close()
 
-    bot.send_message(message.chat.id, TEXTS["uz"]["welcome"].format(BOT_NAME), reply_markup=lang_kb())
+    # State tozalash
+    user_states.pop(message.from_user.id, None)
 
-@bot.callback_query_handler(func=lambda c: c.data.startswith("lang_"))
-def set_language(call):
-    lang = call.data.split("_")[1]
-    conn = get_db()
-    conn.execute("UPDATE users SET language = ? WHERE id = ?", (lang, call.from_user.id))
-    conn.commit()
-    conn.close()
-    
-    bot.delete_message(call.message.chat.id, call.message.message_id)
-    bot.send_message(call.message.chat.id, t(call.from_user.id, "main_menu"), reply_markup=main_menu_kb(call.from_user.id))
+    text = (
+        f"🏪 <b>{BOT_NAME}</b> ga xush kelibsiz!\n\n"
+        f"👋 Salom, <b>{message.from_user.first_name}</b>!\n\n"
+        "🛍 Bizda eng sifatli va arzon texnika mahsulotlari!\n\n"
+        "📱 Smartfonlar\n"
+        "💻 Noutbuklar\n"
+        "🎧 Aksessuarlar\n"
+        "⌚ Smart soatlar\n"
+        "📟 Planshetlar\n\n"
+        "⬇️ Quyidagi menyudan tanlang:"
+    )
+    bot.send_message(message.chat.id, text, reply_markup=main_menu_kb())
 
+
+# ============ /admin KOMANDASI ============
 
 @bot.message_handler(commands=["admin"])
 def cmd_admin(message):
     if message.from_user.id != ADMIN_ID:
+        bot.send_message(message.chat.id, "⛔ Sizda admin huquqi yo'q!")
         return
-    bot.send_message(message.chat.id, "🔐 <b>Admin panel</b>", reply_markup=admin_menu_kb())
+    bot.send_message(message.chat.id, "🔐 <b>Admin panel</b>\n\nQuyidagi menyudan tanlang:", reply_markup=admin_menu_kb())
 
 
-# ============ MENU HANDLERS ============
+# ============ ASOSIY MENYU HANDLERLARI ============
 
-@bot.message_handler(func=lambda m: m.text in [TEXTS["uz"]["btn_catalog"], TEXTS["ru"]["btn_catalog"]])
-def menu_catalog(message):
-    bot.send_message(message.chat.id, t(message.from_user.id, "choose_category"), reply_markup=categories_inline_kb(message.from_user.id))
+@bot.message_handler(func=lambda m: m.text == "🏠 Asosiy menyu")
+def go_main_menu(message):
+    user_states.pop(message.from_user.id, None)
+    bot.send_message(message.chat.id, "🏠 Asosiy menyu", reply_markup=main_menu_kb())
 
-@bot.message_handler(func=lambda m: m.text in [TEXTS["uz"]["btn_sales"], TEXTS["ru"]["btn_sales"]])
-def menu_sales(message):
-    kb, count = products_inline_kb(message.from_user.id, is_sale=True)
-    if count == 0:
-        bot.send_message(message.chat.id, t(message.from_user.id, "search_not_found"))
-        return
-    bot.send_message(message.chat.id, t(message.from_user.id, "sales_title"), reply_markup=kb)
 
-@bot.message_handler(func=lambda m: m.text in [TEXTS["uz"]["btn_settings"], TEXTS["ru"]["btn_settings"]])
-def menu_settings(message):
-    bot.send_message(message.chat.id, "🇺🇿 Tilni tanlang / 🇷🇺 Выберите язык:", reply_markup=lang_kb())
+@bot.message_handler(func=lambda m: m.text == "🛍 Katalog")
+def show_catalog(message):
+    bot.send_message(message.chat.id, "📂 <b>Kategoriyalardan birini tanlang:</b>", reply_markup=categories_inline_kb())
 
-@bot.message_handler(func=lambda m: m.text in [TEXTS["uz"]["btn_referral"], TEXTS["ru"]["btn_referral"]])
-def menu_referral(message):
-    uid = message.from_user.id
+
+@bot.message_handler(func=lambda m: m.text == "🛒 Buyurtmalarim")
+def show_my_orders(message):
     conn = get_db()
-    balance = conn.execute("SELECT balance FROM users WHERE id = ?", (uid,)).fetchone()["balance"]
+    orders = conn.execute("SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC LIMIT 10",
+                          (message.from_user.id,)).fetchall()
     conn.close()
-    
-    link = f"https://t.me/{bot.get_me().username}?start=ref_{uid}"
-    text = t(uid, "referral_text", link, format_price(balance), CURRENCY)
+
+    if not orders:
+        bot.send_message(message.chat.id, "📭 Sizda hali buyurtmalar yo'q.\n\n🛍 Buyurtma berish uchun <b>Katalog</b> tugmasini bosing!")
+        return
+
+    status_emoji = {"yangi": "🆕", "qabul": "✅", "yetkazish": "🚚", "topshirildi": "📦", "bekor": "❌"}
+    text = "🛒 <b>Sizning buyurtmalaringiz:</b>\n\n"
+    for o in orders:
+        emoji = status_emoji.get(o["status"], "❓")
+        text += (
+            f"📋 Buyurtma #{o['id']}\n"
+            f"📦 {o['product_name']}\n"
+            f"💰 {format_price(o['product_price'])} {CURRENCY} x {o['quantity']} dona\n"
+            f"{emoji} Status: <b>{o['status']}</b>\n"
+            f"📅 {o['created_at']}\n"
+            f"{'─' * 25}\n\n"
+        )
     bot.send_message(message.chat.id, text)
 
-@bot.message_handler(func=lambda m: m.text in [TEXTS["uz"]["btn_wishlist"], TEXTS["ru"]["btn_wishlist"]])
-def menu_wishlist(message):
-    uid = message.from_user.id
-    conn = get_db()
-    items = conn.execute("SELECT p.* FROM wishlist w JOIN products p ON w.product_id = p.id WHERE w.user_id = ?", (uid,)).fetchall()
-    conn.close()
-    
-    if not items:
-        bot.send_message(message.chat.id, t(uid, "wishlist_empty"))
-        return
-        
-    lang = get_lang(uid)
-    name_col = f"name_{lang}"
-    kb = types.InlineKeyboardMarkup(row_width=1)
-    for p in items:
-        kb.add(types.InlineKeyboardButton(text=f"⭐ {p[name_col]}", callback_data=f"prod_{p['id']}"))
-    
-    bot.send_message(message.chat.id, t(uid, "btn_wishlist") + ":", reply_markup=kb)
 
-@bot.message_handler(func=lambda m: m.text in [TEXTS["uz"]["btn_search"], TEXTS["ru"]["btn_search"]])
-def menu_search(message):
-    user_states[message.from_user.id] = {"state": "waiting_search", "data": {}}
-    bot.send_message(message.chat.id, t(message.from_user.id, "search_prompt"), reply_markup=cancel_kb(message.from_user.id))
-
-@bot.message_handler(func=lambda m: m.from_user.id in user_states and user_states[m.from_user.id].get("state") == "waiting_search")
-def process_search(message):
-    uid = message.from_user.id
-    if message.text in [TEXTS["uz"]["btn_cancel"], TEXTS["ru"]["btn_cancel"]]:
-        user_states.pop(uid, None)
-        bot.send_message(message.chat.id, t(uid, "main_menu"), reply_markup=main_menu_kb(uid))
-        return
-        
-    kb, count = products_inline_kb(uid, search_query=message.text)
-    user_states.pop(uid, None)
-    
-    bot.send_message(message.chat.id, t(uid, "main_menu"), reply_markup=main_menu_kb(uid))
-    if count == 0:
-        bot.send_message(message.chat.id, t(uid, "search_not_found"))
-    else:
-        bot.send_message(message.chat.id, t(uid, "search_results"), reply_markup=kb)
+@bot.message_handler(func=lambda m: m.text == "📞 Biz bilan bog'lanish")
+def contact_info(message):
+    text = (
+        "📞 <b>Biz bilan bog'lanish:</b>\n\n"
+        "📱 Telefon: +998 XX XXX XX XX\n"
+        "📧 Email: techstoreuz@gmail.com\n"
+        "📍 Manzil: Toshkent sh.\n"
+        "🕐 Ish vaqti: 09:00 - 21:00\n\n"
+        "💬 Telegram: @tech_store_uz_admin\n"
+        "📸 Instagram: @tech_store_uz\n\n"
+        "❓ Savollaringiz bo'lsa, yozing!"
+    )
+    bot.send_message(message.chat.id, text)
 
 
-@bot.message_handler(func=lambda m: m.text in [TEXTS["uz"]["btn_orders"], TEXTS["ru"]["btn_orders"]])
-def menu_orders(message):
-    uid = message.from_user.id
-    conn = get_db()
-    orders = conn.execute("SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC LIMIT 10", (uid,)).fetchall()
-    conn.close()
-    
-    if not orders:
-        bot.send_message(message.chat.id, t(uid, "search_not_found"))
-        return
-        
-    for o in orders:
-        text = f"📦 Buyurtma #{o['id']}\n💰 {format_price(o['total_price'])} {CURRENCY}\n💳 To'lov: {o['payment_method']}\n📌 Status: {o['status']}\n📅 {o['created_at']}\n"
-        bot.send_message(message.chat.id, text)
+@bot.message_handler(func=lambda m: m.text == "ℹ️ Bot haqida")
+def about_bot(message):
+    text = (
+        f"ℹ️ <b>{BOT_NAME} haqida</b>\n\n"
+        "🤖 Bu bot orqali siz eng yangi va sifatli\n"
+        "texnika mahsulotlarini xarid qilishingiz mumkin.\n\n"
+        "✅ <b>Afzalliklarimiz:</b>\n"
+        "• 📦 Tez yetkazib berish\n"
+        "• 💯 Original mahsulotlar\n"
+        "• 🔄 Kafolat bilan\n"
+        "• 💰 Eng arzon narxlar\n"
+        "• 🚚 Bepul yetkazib berish (Toshkent bo'ylab)\n\n"
+        "🛍 Xarid qilish uchun <b>Katalog</b> tugmasini bosing!"
+    )
+    bot.send_message(message.chat.id, text)
 
-# ============ CATALOG CALLBACKS ============
+
+# ============ KATALOG CALLBACK ============
 
 @bot.callback_query_handler(func=lambda c: c.data == "back_cats")
-def back_cats(call):
-    bot.edit_message_text(t(call.from_user.id, "choose_category"), call.message.chat.id, call.message.message_id, reply_markup=categories_inline_kb(call.from_user.id))
+def back_to_categories(call):
+    bot.edit_message_text("📂 <b>Kategoriyalardan birini tanlang:</b>",
+                          call.message.chat.id, call.message.message_id,
+                          reply_markup=categories_inline_kb())
+    bot.answer_callback_query(call.id)
+
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith("cat_"))
 def show_category(call):
     cat_id = int(call.data.split("_")[1])
-    kb, count = products_inline_kb(call.from_user.id, category_id=cat_id)
-    if count == 0:
-        bot.answer_callback_query(call.id, t(call.from_user.id, "search_not_found"), show_alert=True)
+    conn = get_db()
+    prods = conn.execute("SELECT * FROM products WHERE category_id = ? AND in_stock = 1", (cat_id,)).fetchall()
+    cat = conn.execute("SELECT name FROM categories WHERE id = ?", (cat_id,)).fetchone()
+    conn.close()
+
+    if not prods:
+        bot.answer_callback_query(call.id, "😔 Bu kategoriyada mahsulotlar yo'q.", show_alert=True)
         return
-    bot.edit_message_text(t(call.from_user.id, "choose_product"), call.message.chat.id, call.message.message_id, reply_markup=kb)
+
+    cat_name = cat["name"] if cat else "Kategoriya"
+    bot.edit_message_text(
+        f"📂 <b>{cat_name}</b>\n\n🔽 Mahsulotni tanlang:",
+        call.message.chat.id, call.message.message_id,
+        reply_markup=products_inline_kb(cat_id)
+    )
+    bot.answer_callback_query(call.id)
+
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith("prod_"))
 def show_product(call):
     prod_id = int(call.data.split("_")[1])
-    uid = call.from_user.id
-    lang = get_lang(uid)
-    
     conn = get_db()
     p = conn.execute("SELECT * FROM products WHERE id = ?", (prod_id,)).fetchone()
     conn.close()
-    
+
     if not p:
-        bot.answer_callback_query(call.id, "Error", show_alert=True)
+        bot.answer_callback_query(call.id, "❌ Mahsulot topilmadi.", show_alert=True)
         return
-        
-    name = p[f"name_{lang}"]
-    desc = p[f"desc_{lang}"]
-    price = format_price(p['price'])
-    rating = round(p['rating_sum'] / p['rating_count'], 1) if p['rating_count'] > 0 else 0
-    
-    if p['old_price']:
-        old_price = format_price(p['old_price'])
-        price_text = t(uid, "product_sale", old_price, CURRENCY, price, CURRENCY)
-    else:
-        price_text = f"{price} {CURRENCY}"
-        
-    text = t(uid, "product_info", name, desc, price_text, "", rating, p['rating_count'])
-    kb = product_detail_kb(uid, prod_id, p['category_id'])
-    
-    bot.delete_message(call.message.chat.id, call.message.message_id)
-    if p['photo_url']:
-        bot.send_photo(call.message.chat.id, p['photo_url'], caption=text, reply_markup=kb, parse_mode="HTML")
-    else:
-        bot.send_message(call.message.chat.id, text, reply_markup=kb, parse_mode="HTML")
+
+    text = (
+        f"📦 <b>{p['name']}</b>\n\n"
+        f"📝 <b>Tavsif:</b>\n{p['description']}\n\n"
+        f"💰 <b>Narxi:</b> {format_price(p['price'])} {CURRENCY}\n\n"
+        f"{'✅ Mavjud' if p['in_stock'] else '❌ Mavjud emas'}"
+    )
+    bot.edit_message_text(text, call.message.chat.id, call.message.message_id,
+                          reply_markup=product_detail_kb(prod_id, p["category_id"]))
+    bot.answer_callback_query(call.id)
 
 
-@bot.callback_query_handler(func=lambda c: c.data.startswith("rate_"))
-def rate_product(call):
+# ============ BUYURTMA BERISH ============
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("order_"))
+def start_order(call):
+    prod_id = int(call.data.split("_")[1])
+    conn = get_db()
+    p = conn.execute("SELECT * FROM products WHERE id = ?", (prod_id,)).fetchone()
+    conn.close()
+
+    if not p:
+        bot.answer_callback_query(call.id, "❌ Mahsulot topilmadi.", show_alert=True)
+        return
+
+    bot.edit_message_text(
+        f"🛒 <b>{p['name']}</b>\n"
+        f"💰 Narxi: {format_price(p['price'])} {CURRENCY}\n\n"
+        f"📦 Nechta buyurtma bermoqchisiz?",
+        call.message.chat.id, call.message.message_id,
+        reply_markup=quantity_kb(prod_id)
+    )
+    bot.answer_callback_query(call.id)
+
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("qty_"))
+def select_quantity(call):
     parts = call.data.split("_")
     prod_id = int(parts[1])
-    score = int(parts[2])
-    uid = call.from_user.id
-    
+    qty = int(parts[2])
+
     conn = get_db()
-    existing = conn.execute("SELECT score FROM ratings WHERE user_id = ? AND product_id = ?", (uid, prod_id)).fetchone()
-    if existing:
-        bot.answer_callback_query(call.id, "Siz allaqachon baholagansiz / Вы уже оценили", show_alert=True)
-        conn.close()
+    p = conn.execute("SELECT * FROM products WHERE id = ?", (prod_id,)).fetchone()
+    conn.close()
+
+    if not p:
+        bot.answer_callback_query(call.id, "❌ Mahsulot topilmadi.", show_alert=True)
         return
-        
-    conn.execute("INSERT INTO ratings (user_id, product_id, score) VALUES (?, ?, ?)", (uid, prod_id, score))
-    conn.execute("UPDATE products SET rating_sum = rating_sum + ?, rating_count = rating_count + 1 WHERE id = ?", (score, prod_id))
-    conn.commit()
-    
-    p = conn.execute("SELECT rating_sum, rating_count, category_id FROM products WHERE id = ?", (prod_id,)).fetchone()
-    conn.close()
-    
-    bot.answer_callback_query(call.id, t(uid, "thank_you_rating"), show_alert=True)
-    
-    try:
-        # Refresh the keyboard so ratings update (not updating text to save space)
-        bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id, reply_markup=product_detail_kb(uid, prod_id, p['category_id']))
-    except: pass
 
-@bot.callback_query_handler(func=lambda c: c.data.startswith("wish_"))
-def toggle_wishlist(call):
-    prod_id = int(call.data.split("_")[1])
-    uid = call.from_user.id
-    
+    total = p["price"] * qty
+    user_states[call.from_user.id] = {
+        "state": "waiting_phone",
+        "data": {
+            "product_id": prod_id,
+            "product_name": p["name"],
+            "product_price": p["price"],
+            "quantity": qty,
+            "category_id": p["category_id"]
+        }
+    }
+
+    bot.edit_message_text(
+        f"🛒 <b>Buyurtma:</b>\n\n"
+        f"📦 {p['name']}\n"
+        f"📦 Miqdori: {qty} dona\n"
+        f"💰 Jami: {format_price(total)} {CURRENCY}\n\n"
+        f"📱 Telefon raqamingizni yuboring:",
+        call.message.chat.id, call.message.message_id
+    )
+    bot.send_message(
+        call.message.chat.id,
+        "📱 Quyidagi tugmani bosing yoki raqamingizni yozing:\n(Masalan: +998901234567)",
+        reply_markup=phone_kb()
+    )
+    bot.answer_callback_query(call.id)
+
+
+# Telefon raqam — kontakt orqali
+@bot.message_handler(content_types=["contact"], func=lambda m: m.from_user.id in user_states and user_states[m.from_user.id]["state"] == "waiting_phone")
+def receive_phone_contact(message):
+    phone = message.contact.phone_number
+    if not phone.startswith("+"):
+        phone = "+" + phone
     conn = get_db()
-    existing = conn.execute("SELECT 1 FROM wishlist WHERE user_id = ? AND product_id = ?", (uid, prod_id)).fetchone()
-    if existing:
-        conn.execute("DELETE FROM wishlist WHERE user_id = ? AND product_id = ?", (uid, prod_id))
-        msg = t(uid, "removed_from_wishlist")
-    else:
-        conn.execute("INSERT INTO wishlist (user_id, product_id) VALUES (?, ?)", (uid, prod_id))
-        msg = t(uid, "added_to_wishlist")
+    conn.execute("UPDATE users SET phone = ? WHERE id = ?", (phone, message.from_user.id))
     conn.commit()
     conn.close()
-    
-    p_cat = get_db().execute("SELECT category_id FROM products WHERE id = ?", (prod_id,)).fetchone()
-    kb = product_detail_kb(uid, prod_id, p_cat['category_id'] if p_cat else 1)
-    
-    try:
-        bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id, reply_markup=kb)
-    except: pass
-    
-    bot.answer_callback_query(call.id, msg)
+    user_states[message.from_user.id]["data"]["phone"] = phone
+    process_order(message)
 
 
-# ============ CART & CHECKOUT ============
+# Telefon raqam — matn orqali
+@bot.message_handler(func=lambda m: m.from_user.id in user_states and user_states[m.from_user.id]["state"] == "waiting_phone")
+def receive_phone_text(message):
+    if message.text == "❌ Bekor qilish":
+        user_states.pop(message.from_user.id, None)
+        bot.send_message(message.chat.id, "❌ Buyurtma bekor qilindi.", reply_markup=main_menu_kb())
+        return
 
-@bot.callback_query_handler(func=lambda c: c.data.startswith("addcart_"))
-def add_to_cart(call):
-    prod_id = int(call.data.split("_")[1])
-    uid = call.from_user.id
-    
+    phone = message.text.strip()
+    clean_phone = phone.replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
+    if not (clean_phone.startswith("+998") and len(clean_phone) == 13):
+        bot.send_message(message.chat.id, "⚠️ Noto'g'ri format! Iltimos, to'g'ri telefon raqam kiriting.\nMasalan: +998901234567")
+        return
+
     conn = get_db()
-    existing = conn.execute("SELECT quantity FROM cart WHERE user_id = ? AND product_id = ?", (uid, prod_id)).fetchone()
-    if existing:
-        conn.execute("UPDATE cart SET quantity = quantity + 1 WHERE user_id = ? AND product_id = ?", (uid, prod_id))
-    else:
-        conn.execute("INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, 1)", (uid, prod_id))
+    conn.execute("UPDATE users SET phone = ? WHERE id = ?", (phone, message.from_user.id))
     conn.commit()
     conn.close()
-    
-    bot.answer_callback_query(call.id, t(uid, "added_to_cart"))
+    user_states[message.from_user.id]["data"]["phone"] = phone
+    process_order(message)
 
-@bot.message_handler(func=lambda m: m.text in [TEXTS["uz"]["btn_cart"], TEXTS["ru"]["btn_cart"]])
-def show_cart(message):
+
+def process_order(message):
     uid = message.from_user.id
+    data = user_states[uid]["data"]
+
+    total = data["product_price"] * data["quantity"]
+
     conn = get_db()
-    items = conn.execute("SELECT c.quantity, p.price FROM cart c JOIN products p ON c.product_id = p.id WHERE c.user_id = ?", (uid,)).fetchall()
-    conn.close()
-    
-    if not items:
-        bot.send_message(message.chat.id, t(uid, "cart_empty"))
-        return
-        
-    total = sum(i['quantity'] * i['price'] for i in items)
-    
-    text = t(uid, "cart_content")
-    text += t(uid, "cart_total", format_price(total), CURRENCY)
-    
-    bot.send_message(message.chat.id, text, reply_markup=cart_kb(uid))
-
-@bot.callback_query_handler(func=lambda c: c.data.startswith("cartminus_") or c.data.startswith("cartplus_"))
-def modify_cart(call):
-    action, prod_id = call.data.split("_")
-    prod_id = int(prod_id)
-    uid = call.from_user.id
-    
-    conn = get_db()
-    qty = conn.execute("SELECT quantity FROM cart WHERE user_id = ? AND product_id = ?", (uid, prod_id)).fetchone()
-    
-    if qty:
-        q = qty['quantity']
-        if action == "cartminus" and q > 1:
-            conn.execute("UPDATE cart SET quantity = quantity - 1 WHERE user_id = ? AND product_id = ?", (uid, prod_id))
-        elif action == "cartminus" and q == 1:
-            conn.execute("DELETE FROM cart WHERE user_id = ? AND product_id = ?", (uid, prod_id))
-        elif action == "cartplus":
-            conn.execute("UPDATE cart SET quantity = quantity + 1 WHERE user_id = ? AND product_id = ?", (uid, prod_id))
-        conn.commit()
-    
-    items = conn.execute("SELECT c.quantity, p.price FROM cart c JOIN products p ON c.product_id = p.id WHERE c.user_id = ?", (uid,)).fetchall()
-    conn.close()
-    
-    if not items:
-        bot.edit_message_text(t(uid, "cart_empty"), call.message.chat.id, call.message.message_id)
-        return
-        
-    total = sum(i['quantity'] * i['price'] for i in items)
-    text = t(uid, "cart_content") + t(uid, "cart_total", format_price(total), CURRENCY)
-    
-    bot.edit_message_text(text, call.message.chat.id, call.message.message_id, reply_markup=cart_kb(uid))
-
-@bot.callback_query_handler(func=lambda c: c.data == "cart_clear")
-def clear_cart(call):
-    uid = call.from_user.id
-    conn = get_db()
-    conn.execute("DELETE FROM cart WHERE user_id = ?", (uid,))
-    conn.commit()
-    conn.close()
-    bot.edit_message_text(t(uid, "cart_empty"), call.message.chat.id, call.message.message_id)
-
-
-@bot.callback_query_handler(func=lambda c: c.data == "cart_checkout")
-def checkout_start(call):
-    uid = call.from_user.id
-    user_states[uid] = {"state": "checkout_phone", "data": {}}
-    
-    bot.delete_message(call.message.chat.id, call.message.message_id)
-    bot.send_message(call.message.chat.id, t(uid, "checkout_phone"), reply_markup=phone_kb(uid))
-
-@bot.message_handler(content_types=["contact", "text"], func=lambda m: m.from_user.id in user_states and user_states[m.from_user.id].get("state") == "checkout_phone")
-def checkout_phone(message):
-    uid = message.from_user.id
-    if message.text in [TEXTS["uz"]["btn_cancel"], TEXTS["ru"]["btn_cancel"]]:
-        user_states.pop(uid, None)
-        bot.send_message(message.chat.id, t(uid, "main_menu"), reply_markup=main_menu_kb(uid))
-        return
-        
-    phone = message.contact.phone_number if message.contact else message.text
-    user_states[uid]["data"]["phone"] = phone
-    user_states[uid]["state"] = "checkout_payment"
-    
-    bot.send_message(message.chat.id, t(uid, "main_menu"), reply_markup=main_menu_kb(uid))
-    bot.send_message(message.chat.id, t(uid, "checkout_payment"), reply_markup=payment_kb(uid))
-
-
-@bot.callback_query_handler(func=lambda c: c.data.startswith("pay_"))
-def checkout_finish(call):
-    uid = call.from_user.id
-    if uid not in user_states or user_states[uid].get("state") != "checkout_payment":
-        return
-        
-    payment = call.data.split("_")[1]
-    phone = user_states[uid]["data"]["phone"]
-    
-    conn = get_db()
-    items = conn.execute("SELECT c.product_id, c.quantity, p.price FROM cart c JOIN products p ON c.product_id = p.id WHERE c.user_id = ?", (uid,)).fetchall()
-    
-    if not items:
-        bot.answer_callback_query(call.id, "Xatolik!", show_alert=True)
-        return
-        
-    total = sum(i['quantity'] * i['price'] for i in items)
-    
     c = conn.cursor()
-    c.execute("INSERT INTO orders (user_id, phone, payment_method, total_price) VALUES (?, ?, ?, ?)", (uid, phone, payment, total))
+    c.execute(
+        "INSERT INTO orders (user_id, user_fullname, username, phone, product_id, product_name, product_price, quantity) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        (uid, message.from_user.full_name, message.from_user.username or "", data["phone"],
+         data["product_id"], data["product_name"], data["product_price"], data["quantity"])
+    )
     order_id = c.lastrowid
-    
-    for item in items:
-        c.execute("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)", 
-                  (order_id, item['product_id'], item['quantity'], item['price']))
-                  
-    c.execute("DELETE FROM cart WHERE user_id = ?", (uid,))
     conn.commit()
     conn.close()
-    
-    user_states.pop(uid, None)
-    
-    pay_texts = {"cash": "Naqd", "click": "Click", "payme": "Payme", "uzum": "Uzum"}
-    p_name = pay_texts.get(payment, payment)
-    
-    bot.edit_message_text(t(uid, "order_success", order_id, p_name), call.message.chat.id, call.message.message_id)
-    
+
+    # Foydalanuvchiga xabar
+    user_text = (
+        f"✅ <b>Buyurtma #{order_id} qabul qilindi!</b>\n\n"
+        f"📦 Mahsulot: {data['product_name']}\n"
+        f"📦 Miqdori: {data['quantity']} dona\n"
+        f"💰 Narxi: {format_price(data['product_price'])} {CURRENCY}\n"
+        f"💰 Jami: {format_price(total)} {CURRENCY}\n"
+        f"📱 Telefon: {data['phone']}\n\n"
+        f"📞 Tez orada operator siz bilan bog'lanadi!\n"
+        f"⏰ Ish vaqti: 09:00 - 21:00"
+    )
+    bot.send_message(message.chat.id, user_text, reply_markup=main_menu_kb())
+
+    # Adminga xabar
+    admin_text = (
+        f"🆕 <b>Yangi buyurtma #{order_id}!</b>\n\n"
+        f"👤 Mijoz: {message.from_user.full_name}\n"
+        f"👤 Username: @{message.from_user.username or 'yoq'}\n"
+        f"📱 Telefon: {data['phone']}\n\n"
+        f"📦 Mahsulot: {data['product_name']}\n"
+        f"📦 Miqdori: {data['quantity']} dona\n"
+        f"💰 Narxi: {format_price(data['product_price'])} {CURRENCY}\n"
+        f"💰 Jami: {format_price(total)} {CURRENCY}"
+    )
     try:
-        bot.send_message(ADMIN_ID, f"🆕 <b>Yangi buyurtma #{order_id}</b>\nTelefon: {phone}\nTo'lov: {p_name}\nSumma: {format_price(total)} {CURRENCY}")
-    except: pass
+        bot.send_message(ADMIN_ID, admin_text, reply_markup=order_status_kb(order_id))
+    except Exception as e:
+        logger.error(f"Adminga xabar yuborishda xatolik: {e}")
+
+    user_states.pop(uid, None)
 
 
-# ============ ADMIN BROADCAST ============
+# ============ ADMIN: BUYURTMA STATUS O'ZGARTIRISH ============
 
-@bot.message_handler(func=lambda m: m.text == "📢 Xabar yuborish" and m.from_user.id == ADMIN_ID)
-def admin_broadcast_start(message):
-    user_states[message.from_user.id] = {"state": "admin_broadcast"}
-    bot.send_message(message.chat.id, "📢 Xabarni yoki rasmni yuboring. /cancel bekor qilish uchun.")
+@bot.callback_query_handler(func=lambda c: c.data.startswith("st_"))
+def change_order_status(call):
+    if call.from_user.id != ADMIN_ID:
+        bot.answer_callback_query(call.id, "⛔ Sizda ruxsat yo'q!", show_alert=True)
+        return
 
-@bot.message_handler(content_types=["text", "photo"], func=lambda m: m.from_user.id in user_states and user_states[m.from_user.id].get("state") == "admin_broadcast")
-def admin_broadcast_send(message):
-    if message.text == "/cancel":
+    parts = call.data.split("_")
+    order_id = int(parts[1])
+    new_status = parts[2]
+
+    status_texts = {
+        "qabul": "✅ Qabul qilindi",
+        "yetkazish": "🚚 Yetkazilmoqda",
+        "topshirildi": "📦 Topshirildi",
+        "bekor": "❌ Bekor qilindi"
+    }
+
+    conn = get_db()
+    conn.execute("UPDATE orders SET status = ? WHERE id = ?", (new_status, order_id))
+    conn.commit()
+    conn.close()
+
+    bot.edit_message_text(
+        call.message.text + f"\n\n{status_texts.get(new_status, new_status)} ✔️",
+        call.message.chat.id, call.message.message_id,
+        parse_mode="HTML"
+    )
+    bot.answer_callback_query(call.id, f"Buyurtma #{order_id} statusi yangilandi!", show_alert=True)
+
+
+# ============ ADMIN: STATISTIKA ============
+
+@bot.message_handler(func=lambda m: m.text == "📊 Statistika" and m.from_user.id == ADMIN_ID)
+def show_stats(message):
+    conn = get_db()
+    total_users = conn.execute("SELECT COUNT(*) FROM users").fetchone()[0]
+    total_orders = conn.execute("SELECT COUNT(*) FROM orders").fetchone()[0]
+    new_orders = conn.execute("SELECT COUNT(*) FROM orders WHERE status = 'yangi'").fetchone()[0]
+    total_products = conn.execute("SELECT COUNT(*) FROM products").fetchone()[0]
+    conn.close()
+
+    text = (
+        "📊 <b>Statistika:</b>\n\n"
+        f"👥 Jami foydalanuvchilar: <b>{total_users}</b>\n"
+        f"🛒 Jami buyurtmalar: <b>{total_orders}</b>\n"
+        f"🆕 Yangi buyurtmalar: <b>{new_orders}</b>\n"
+        f"📦 Jami mahsulotlar: <b>{total_products}</b>\n"
+    )
+    bot.send_message(message.chat.id, text)
+
+
+# ============ ADMIN: BUYURTMALAR RO'YXATI ============
+
+@bot.message_handler(func=lambda m: m.text == "📋 Buyurtmalar" and m.from_user.id == ADMIN_ID)
+def show_all_orders(message):
+    conn = get_db()
+    orders = conn.execute("SELECT * FROM orders ORDER BY created_at DESC LIMIT 15").fetchall()
+    conn.close()
+
+    if not orders:
+        bot.send_message(message.chat.id, "📭 Buyurtmalar yo'q.")
+        return
+
+    status_emoji = {"yangi": "🆕", "qabul": "✅", "yetkazish": "🚚", "topshirildi": "📦", "bekor": "❌"}
+    text = "📋 <b>Oxirgi buyurtmalar:</b>\n\n"
+    for o in orders:
+        emoji = status_emoji.get(o["status"], "❓")
+        text += (
+            f"📋 #{o['id']} | {emoji} {o['status']}\n"
+            f"👤 {o['user_fullname']} | 📱 {o['phone']}\n"
+            f"📦 {o['product_name']} x{o['quantity']}\n"
+            f"💰 {format_price(o['product_price'])} {CURRENCY}\n"
+            f"{'─' * 25}\n"
+        )
+    bot.send_message(message.chat.id, text)
+
+
+# ============ ADMIN: MAHSULOT QO'SHISH ============
+
+@bot.message_handler(func=lambda m: m.text == "➕ Mahsulot qo'shish" and m.from_user.id == ADMIN_ID)
+def start_add_product(message):
+    conn = get_db()
+    cats = conn.execute("SELECT * FROM categories").fetchall()
+    conn.close()
+
+    text = "📂 Kategoriya raqamini kiriting:\n\n"
+    for cat in cats:
+        text += f"{cat['id']}. {cat['name']}\n"
+
+    user_states[message.from_user.id] = {"state": "add_category", "data": {}}
+    bot.send_message(message.chat.id, text, reply_markup=cancel_kb())
+
+
+@bot.message_handler(func=lambda m: m.from_user.id in user_states and user_states[m.from_user.id]["state"] == "add_category")
+def add_prod_category(message):
+    if message.text == "❌ Bekor qilish":
         user_states.pop(message.from_user.id, None)
         bot.send_message(message.chat.id, "❌ Bekor qilindi.", reply_markup=admin_menu_kb())
         return
-        
-    conn = get_db()
-    users = conn.execute("SELECT id FROM users").fetchall()
-    conn.close()
-    
-    success = 0
-    for u in users:
-        try:
-            if message.photo:
-                bot.send_photo(u['id'], message.photo[-1].file_id, caption=message.caption, parse_mode="HTML")
-            else:
-                bot.send_message(u['id'], message.text, parse_mode="HTML")
-            success += 1
-        except:
-            pass
-            
-    user_states.pop(message.from_user.id, None)
-    bot.send_message(message.chat.id, f"✅ Xabar {success} ta foydalanuvchiga yuborildi!", reply_markup=admin_menu_kb())
+    try:
+        cat_id = int(message.text)
+        user_states[message.from_user.id]["data"]["category_id"] = cat_id
+        user_states[message.from_user.id]["state"] = "add_name"
+        bot.send_message(message.chat.id, "📝 Mahsulot nomini kiriting:")
+    except ValueError:
+        bot.send_message(message.chat.id, "⚠️ Raqam kiriting!")
 
-@bot.message_handler(func=lambda m: m.text == "🏠 Asosiy menyu" and m.from_user.id == ADMIN_ID)
-def go_main_menu(message):
-    user_states.pop(message.from_user.id, None)
-    bot.send_message(message.chat.id, "🏠 Asosiy menyu", reply_markup=main_menu_kb(message.from_user.id))
 
-@bot.message_handler(func=lambda m: m.text == "📊 Statistika" and m.from_user.id == ADMIN_ID)
-def show_stats_admin(message):
-    conn = get_db()
-    users_count = conn.execute("SELECT COUNT(*) FROM users").fetchone()[0]
-    orders_count = conn.execute("SELECT COUNT(*) FROM orders").fetchone()[0]
-    total_revenue = conn.execute("SELECT SUM(total_price) FROM orders WHERE status != 'bekor'").fetchone()[0] or 0
-    conn.close()
-    
-    bot.send_message(message.chat.id, f"📊 <b>Statistika:</b>\nFoydalanuvchilar: {users_count}\nBuyurtmalar: {orders_count}\nUmumiy summa: {format_price(total_revenue)} {CURRENCY}")
+@bot.message_handler(func=lambda m: m.from_user.id in user_states and user_states[m.from_user.id]["state"] == "add_name")
+def add_prod_name(message):
+    if message.text == "❌ Bekor qilish":
+        user_states.pop(message.from_user.id, None)
+        bot.send_message(message.chat.id, "❌ Bekor qilindi.", reply_markup=admin_menu_kb())
+        return
+    user_states[message.from_user.id]["data"]["name"] = message.text
+    user_states[message.from_user.id]["state"] = "add_desc"
+    bot.send_message(message.chat.id, "📝 Mahsulot tavsifini kiriting:")
+
+
+@bot.message_handler(func=lambda m: m.from_user.id in user_states and user_states[m.from_user.id]["state"] == "add_desc")
+def add_prod_desc(message):
+    if message.text == "❌ Bekor qilish":
+        user_states.pop(message.from_user.id, None)
+        bot.send_message(message.chat.id, "❌ Bekor qilindi.", reply_markup=admin_menu_kb())
+        return
+    user_states[message.from_user.id]["data"]["description"] = message.text
+    user_states[message.from_user.id]["state"] = "add_price"
+    bot.send_message(message.chat.id, "💰 Mahsulot narxini kiriting (faqat raqam, so'mda):")
+
+
+@bot.message_handler(func=lambda m: m.from_user.id in user_states and user_states[m.from_user.id]["state"] == "add_price")
+def add_prod_price(message):
+    if message.text == "❌ Bekor qilish":
+        user_states.pop(message.from_user.id, None)
+        bot.send_message(message.chat.id, "❌ Bekor qilindi.", reply_markup=admin_menu_kb())
+        return
+    try:
+        price = int(message.text.replace(" ", "").replace(",", ""))
+        data = user_states[message.from_user.id]["data"]
+
+        conn = get_db()
+        c = conn.cursor()
+        c.execute("INSERT INTO products (category_id, name, description, price) VALUES (?, ?, ?, ?)",
+                  (data["category_id"], data["name"], data["description"], price))
+        prod_id = c.lastrowid
+        conn.commit()
+        conn.close()
+
+        bot.send_message(
+            message.chat.id,
+            f"✅ Mahsulot muvaffaqiyatli qo'shildi!\n\n"
+            f"🆔 ID: {prod_id}\n"
+            f"📦 Nomi: {data['name']}\n"
+            f"💰 Narxi: {format_price(price)} {CURRENCY}",
+            reply_markup=admin_menu_kb()
+        )
+        user_states.pop(message.from_user.id, None)
+    except ValueError:
+        bot.send_message(message.chat.id, "⚠️ Faqat raqam kiriting!")
+
+
+# ============ ADMIN: MAHSULOT O'CHIRISH ============
+
+@bot.message_handler(func=lambda m: m.text == "🗑 Mahsulot o'chirish" and m.from_user.id == ADMIN_ID)
+def delete_prod_prompt(message):
+    user_states[message.from_user.id] = {"state": "delete_product", "data": {}}
+    bot.send_message(
+        message.chat.id,
+        "🗑 O'chirmoqchi bo'lgan mahsulot ID sini yuboring.\n(Mahsulot ID sini katalogdan ko'rishingiz mumkin)",
+        reply_markup=cancel_kb()
+    )
+
+
+@bot.message_handler(func=lambda m: m.from_user.id in user_states and user_states[m.from_user.id]["state"] == "delete_product")
+def delete_prod(message):
+    if message.text == "❌ Bekor qilish":
+        user_states.pop(message.from_user.id, None)
+        bot.send_message(message.chat.id, "❌ Bekor qilindi.", reply_markup=admin_menu_kb())
+        return
+    try:
+        prod_id = int(message.text)
+        conn = get_db()
+        p = conn.execute("SELECT name FROM products WHERE id = ?", (prod_id,)).fetchone()
+        if not p:
+            bot.send_message(message.chat.id, "❌ Bunday ID li mahsulot topilmadi!")
+            return
+        conn.execute("DELETE FROM products WHERE id = ?", (prod_id,))
+        conn.commit()
+        conn.close()
+        user_states.pop(message.from_user.id, None)
+        bot.send_message(message.chat.id, f"🗑 <b>{p['name']}</b> o'chirildi!", reply_markup=admin_menu_kb())
+    except ValueError:
+        bot.send_message(message.chat.id, "⚠️ Raqam kiriting!")
+
+
+# ============ ISHGA TUSHIRISH ============
 
 if __name__ == "__main__":
     init_db()
     add_sample_data()
-    logger.info("Bot ishga tushmoqda...")
+
+    logger.info(f"🤖 {BOT_NAME} bot ishga tushdi!")
+    logger.info("Polling boshlandi...")
+
     bot.infinity_polling(skip_pending=True)
