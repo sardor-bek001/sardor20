@@ -738,7 +738,7 @@ if __name__ == "__main__":
     init_db()
     add_sample_data()
 
-    logger.info(f"🤖 {BOT_NAME} bot ishga tushdi!")
+    logger.info(f"{BOT_NAME} bot ishga tushdi!")
     logger.info("Polling boshlandi...")
 
     bot.infinity_polling(skip_pending=True)
