@@ -227,11 +227,23 @@ def order_status_kb(order_id):
 
 @bot.message_handler(commands=["start"])
 def cmd_start(message):
-    # Foydalanuvchini saqlash
+    # Foydalanuvchini bazadan qidiramiz yoki qo'shamiz
     conn = get_db()
-    conn.execute("INSERT OR REPLACE INTO users (id, fullname, username) VALUES (?, ?, ?)",
-                 (message.from_user.id, message.from_user.full_name, message.from_user.username))
-    conn.commit()
+    c = conn.cursor()
+    user = c.execute("SELECT * FROM users WHERE id = ?", (message.from_user.id,)).fetchone()
+    
+    if not user:
+        c.execute("INSERT OR REPLACE INTO users (id, fullname, username) VALUES (?, ?, ?)",
+                     (message.from_user.id, message.from_user.full_name, message.from_user.username))
+        conn.commit()
+        user = c.execute("SELECT * FROM users WHERE id = ?", (message.from_user.id,)).fetchone()
+    
+    if not user["phone"]:
+        user_states[message.from_user.id] = {"state": "waiting_for_phone", "data": {}}
+        bot.send_message(message.chat.id, "Ro'yxatdan o'tish uchun telefon raqamingizni yuboring:", reply_markup=phone_kb())
+        conn.close()
+        return
+        
     conn.close()
 
     # State tozalash
@@ -249,6 +261,21 @@ def cmd_start(message):
         "⬇️ Quyidagi menyudan tanlang:"
     )
     bot.send_message(message.chat.id, text, reply_markup=main_menu_kb())
+
+@bot.message_handler(content_types=['contact'])
+def handle_contact(message):
+    if message.contact is not None:
+        phone_number = message.contact.phone_number
+        conn = get_db()
+        conn.execute("UPDATE users SET phone = ? WHERE id = ?", (phone_number, message.from_user.id))
+        conn.commit()
+        conn.close()
+        
+        user_states.pop(message.from_user.id, None)
+        bot.send_message(message.chat.id, "✅ Telefon raqamingiz qabul qilindi. Rahmat!", reply_markup=main_menu_kb())
+        
+        # Bosh menyuni ko'rsatish
+        cmd_start(message)
 
 
 # ============ /admin KOMANDASI ============
